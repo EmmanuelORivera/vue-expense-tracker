@@ -1,5 +1,13 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import Header from './components/Header.vue'
+import Balance from './components/Balance.vue'
+</script>
 
-<template>My App</template>
+<template>
+  <Header />
+  <div class="container">
+    <Balance />
+  </div>
+</template>
 
 <style scoped></style>
