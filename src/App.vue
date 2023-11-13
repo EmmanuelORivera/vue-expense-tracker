@@ -11,7 +11,7 @@ export interface ITransaction {
   amount: number
 }
 
-import { reactive } from 'vue'
+import { reactive, computed } from 'vue'
 
 const transactions = reactive<ITransaction[]>([
   { id: 1, text: 'Flower', amount: -19.99 },
@@ -19,12 +19,18 @@ const transactions = reactive<ITransaction[]>([
   { id: 3, text: 'Book', amount: -10 },
   { id: 4, text: 'Camera', amount: 150 },
 ])
+
+const total = computed(() => {
+  return transactions.reduce((acc, currVal) => {
+    return acc + currVal.amount
+  }, 0)
+})
 </script>
 
 <template>
   <Header />
   <div class="container">
-    <Balance />
+    <Balance :total="total" />
     <IncomeExpenses />
     <TransactionList :transactions="transactions" />
     <AddTransaction />
