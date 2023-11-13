@@ -3,7 +3,10 @@ import Header from './components/Header.vue'
 import Balance from './components/Balance.vue'
 import IncomeExpenses from './components/IncomeExpenses.vue'
 import TransactionList from './components/TransactionList.vue'
-import AddTransaction from './components/AddTransaction.vue'
+import AddTransaction, {
+  type TransactionSubmitted,
+} from './components/AddTransaction.vue'
+import { useToast } from 'vue-toastification'
 
 export interface ITransaction {
   id: number
@@ -12,6 +15,8 @@ export interface ITransaction {
 }
 
 import { reactive, computed } from 'vue'
+
+const toast = useToast()
 
 const transactions = reactive<ITransaction[]>([
   { id: 1, text: 'Flower', amount: -19.99 },
@@ -37,6 +42,20 @@ const expanse = computed(() => {
     return currVal.amount < 0 ? acc + currVal.amount : acc
   }, 0)
 })
+
+const handleTransactionSubmitted = (transactionData: TransactionSubmitted) => {
+  transactions.push({
+    id: generateUniqueId(),
+    text: transactionData.text,
+    amount: transactionData.amount,
+  })
+
+  toast.success('Transaction added')
+}
+
+const generateUniqueId = () => {
+  return Math.floor(Math.random() * 1000000)
+}
 </script>
 
 <template>
@@ -45,7 +64,7 @@ const expanse = computed(() => {
     <Balance :total="total" />
     <IncomeExpenses :income="income" :expense="expanse" />
     <TransactionList :transactions="transactions" />
-    <AddTransaction />
+    <AddTransaction @transaction-submitted="handleTransactionSubmitted" />
   </div>
 </template>
 
