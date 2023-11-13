@@ -25,13 +25,25 @@ const total = computed(() => {
     return acc + currVal.amount
   }, 0)
 })
+
+const income = computed(() => {
+  return transactions.reduce((acc, currVal) => {
+    return currVal.amount > 0 ? acc + currVal.amount : acc
+  }, 0)
+})
+
+const expanse = computed(() => {
+  return transactions.reduce((acc, currVal) => {
+    return currVal.amount < 0 ? acc + currVal.amount : acc
+  }, 0)
+})
 </script>
 
 <template>
   <Header />
   <div class="container">
     <Balance :total="total" />
-    <IncomeExpenses />
+    <IncomeExpenses :income="income" :expense="expanse" />
     <TransactionList :transactions="transactions" />
     <AddTransaction />
   </div>
