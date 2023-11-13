@@ -14,16 +14,11 @@ export interface ITransaction {
   amount: number
 }
 
-import { reactive, computed } from 'vue'
+import { reactive, computed, onMounted } from 'vue'
 
 const toast = useToast()
 
-const transactions = reactive<ITransaction[]>([
-  { id: 1, text: 'Flower', amount: -19.99 },
-  { id: 2, text: 'Salary', amount: 299.97 },
-  { id: 3, text: 'Book', amount: -10 },
-  { id: 4, text: 'Camera', amount: 150 },
-])
+const transactions = reactive<ITransaction[]>([])
 
 const total = computed(() => {
   return transactions.reduce((acc, currVal) => {
@@ -50,6 +45,7 @@ const handleTransactionSubmitted = (transactionData: TransactionSubmitted) => {
     amount: transactionData.amount,
   })
 
+  saveTransactionsToLocalStorage()
   toast.success('Transaction added')
 }
 
@@ -61,9 +57,22 @@ const handleTransactionDeleted = (id: number) => {
   const index = transactions.findIndex((transaction) => transaction.id === id)
   if (index !== -1) {
     transactions.splice(index, 1)
+    saveTransactionsToLocalStorage()
     toast.success(`Transaction ${id} was deleted`)
   }
 }
+
+const saveTransactionsToLocalStorage = () => {
+  localStorage.setItem('transactions', JSON.stringify(transactions))
+}
+
+onMounted(() => {
+  const savedTransactionString = localStorage.getItem('transactions')
+  if (savedTransactionString !== null) {
+    const savedTransactions: ITransaction[] = JSON.parse(savedTransactionString)
+    transactions.push(...savedTransactions)
+  }
+})
 </script>
 
 <template>
